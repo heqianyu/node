@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript">
+    	window.onload = function () {
+    		var inputarray = document.querySelectorAll('input');
+			var buttonarray = document.querySelectorAll('button')
+			var parray = document.querySelectorAll('p.re')
+			buttonarray[0].onclick = function () {
+			    var obj = document.querySelector('select');
+			    var index = obj.selectedIndex;
+			    ajax({
+			        url: "calu",
+			        type: 'post',
+			        data: {
+			            vf: inputarray[0].value,
+			            vs: inputarray[1].value,
+			            vt: obj.options[index].value
+			        	},
+			        success: function (text, xml) {
+			            parray[0].innerText = '运算结果:' + text
+			        }
+    				})
+			}
+			
+			function ajax(opt) {
+	    		opt = opt || {};
+			    opt.type = opt.type.toUpperCase() || 'POST';
+			    opt.url = opt.url || '';
+			    opt.async = opt.async || true;
+			    opt.data = opt.data || null;
+			    opt.success = opt.success || function () {};
+			    opt.fail = opt.fail || function () {}
+			    var xmlHttp = null;
+			    if (XMLHttpRequest) {
+			        xmlHttp = new XMLHttpRequest();
+			    }
+			    else {
+			        xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+			    }
+			    var params = [];
+			    for (var key in opt.data) {
+			        params.push(key + '=' + opt.data[key]);
+			    }
+			    var postData = params.join('&');
+
+			    if (opt.type === 'POST') {
+			        xmlHttp.open(opt.type, opt.url, opt.async);
+			        xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+			        xmlHttp.send(postData);
+			    }
+			    else if (opt.type === 'GET') {
+			        xmlHttp.open(opt.type, opt.url + '?' + postData, opt.async);
+			        xmlHttp.send(null);
+			    }
+			    xmlHttp.onreadystatechange = function () {
+			        if (xmlHttp.readyState == 4) {
+			            var status = xmlHttp.status;
+			            if (status >= 200 && status < 300) {
+			                opt.success && opt.success(xmlHttp.responseText, xmlHttp.responseXML);
+			            } else {
+			                opt.fail && opt.fail(status);
+			            }
+			        }
+			    };
+			}
+		}
+    </script>
+  </head>
+  <body>
+    <h1>什么破玩意儿</h1>
+    <p>Welcome to <%= title %></p>
+    <p>输入第一个数</p>
+	<input style="display: block">
+	<select style="margin-top: 10px">
+	    <option value="1">+</option>
+	    <option value="2">-</option>
+	    <option value="3">×</option>
+	    <option value="4">÷</option>
+	</select>
+	<p>输入第二个数</p>
+	<input>
+	<button id="click">计算</button>
+	<P class="re">运算结果:</P>
+</body>
+</html>

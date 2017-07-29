@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript">
+    	window.onload = function () {
+    		var inputarray = document.querySelectorAll('input');
+			var buttonarray = document.querySelectorAll('button')
+			var parray = document.querySelectorAll('p.re')
+			buttonarray[1].onclick = function () {
+			    ajax({
+			        url: "torgb",
+			        type: 'post',
+			        data: {
+			            'vs': inputarray[3].value,
+			        },
+			        success: function (text, xml) {
+			            parray[1].innerText = '运算结果:' + text
+			        }
+			    })
+			}
+			buttonarray[0].onclick = function () {
+			    ajax({
+			        url: "tohex",
+			        type: 'post',
+			        data: {
+			            'r': inputarray[0].value,
+			            'g': inputarray[1].value,
+			            'b': inputarray[2].value,
+			        },
+			        success: function (text, xml) {
+			            parray[0].innerText = '运算结果:' + text
+			        }
+			    })
+			}
+
+			
+			function ajax(opt) {
+	    		opt = opt || {};
+			    opt.type = opt.type.toUpperCase() || 'POST';
+			    opt.url = opt.url || '';
+			    opt.async = opt.async || true;
+			    opt.data = opt.data || null;
+			    opt.success = opt.success || function () {};
+			    opt.fail = opt.fail || function () {}
+			    var xmlHttp = null;
+			    if (XMLHttpRequest) {
+			        xmlHttp = new XMLHttpRequest();
+			    }
+			    else {
+			        xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+			    }
+			    var params = [];
+			    for (var key in opt.data) {
+			        params.push(key + '=' + opt.data[key]);
+			    }
+			    var postData = params.join('&');
+
+			    if (opt.type === 'POST') {
+			        xmlHttp.open(opt.type, opt.url, opt.async);
+			        xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+			        xmlHttp.send(postData);
+			    }
+			    else if (opt.type === 'GET') {
+			        xmlHttp.open(opt.type, opt.url + '?' + postData, opt.async);
+			        xmlHttp.send(null);
+			    }
+			    xmlHttp.onreadystatechange = function () {
+			        if (xmlHttp.readyState == 4) {
+			            var status = xmlHttp.status;
+			            if (status >= 200 && status < 300) {
+			                opt.success && opt.success(xmlHttp.responseText, xmlHttp.responseXML);
+			            } else {
+			                opt.fail && opt.fail(status);
+			            }
+			        }
+			    };
+			}
+		}
+    </script>
+  </head>
+  <body>
+    <p>输入rgb 颜色</p>
+	<input placeholder="r"><input placeholder="g"><input placeholder="b">
+	<button>转换</button>
+	<P class="re">运算结果:</P>
+	<p>输入16进制 颜色</p>
+	<input>
+	<button>转换</button>
+	<P class="re">运算结果:</P>
+</body>
+</html>
